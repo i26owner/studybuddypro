@@ -2338,6 +2338,82 @@
         </p>
     </div>
 </footer>
+<div class="new-feature-container" style="margin: 20px 20px 100px 20px;">
+    <h2 style="font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; padding-left: 5px; opacity: 0.8;">
+        Practice Zone
+    </h2>
+
+    <div onclick="openQuizWindow()" class="custom-nav-box" style="
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        position: relative;
+    ">
+        <div style="display: flex; align-items: center; gap: 18px;">
+            <div style="
+                width: 54px; 
+                height: 54px; 
+                background: linear-gradient(135deg, var(--primary), #00d2ff); 
+                border-radius: 18px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                color: white;
+                box-shadow: 0 8px 20px rgba(0,168,255,0.25);
+            ">
+                <i class="fa-solid fa-vial-circle-check" style="font-size: 22px;"></i>
+            </div>
+
+            <div>
+                <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: var(--text);">Attempt MCQ Test</h3>
+                <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--text); opacity: 0.6; font-weight: 600; letter-spacing: 0.2px;">
+                    अपनी तैयारी जांचें और स्कोर देखें <i class="fa-solid fa-arrow-right" style="margin-left: 6px; font-size: 10px;"></i>
+                </p>
+            </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.03); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text); opacity: 0.3;"></i>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* टैप इफेक्ट */
+    .custom-nav-box:active {
+        transform: scale(0.96);
+        background: rgba(0, 168, 255, 0.02);
+    }
+    
+    @media (min-width: 768px) {
+        .custom-nav-box:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0,168,255,0.12);
+        }
+    }
+</style>
+
+<script>
+    /**
+     * MCQ विंडो ओपन करने का फंक्शन
+     */
+    function openQuizWindow() {
+        // जब आप अपनी एमसीक्यू फाइल बना लें, तो "YOUR_FILE_NAME_HERE.html" को बदल दें
+        const quizFileName = "MCQtest.html"; 
+        
+        // नया विंडो/टैब ओपन करना
+        window.open(quizFileName, '_blank');
+    }
+</script>
+
 
 
 </body>
