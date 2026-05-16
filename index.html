@@ -556,13 +556,13 @@
         function openSidebar() { mySidebar.classList.add('active'); sidebarOverlay.style.display = 'block'; }
         function closeSidebar() { mySidebar.classList.remove('active'); sidebarOverlay.style.display = 'none'; }
 
-        function openEditPage() { window.location.href = "edit.html"; }
+        function openEditPage() { window.location.href = "Edit.html"; }
 
         function openAdminPanel() {
             let secretKey = prompt("🔐 Admin Login: Please enter security password:");
             if (secretKey === "i26") {
                 alert("🔓 Password correct! Admin Panel is opening in a new window...");
-                window.open("admin.html", "_blank"); 
+                window.open("Admin.html", "_blank"); 
             } else if (secretKey !== null) {
                 alert("❌ Access denied! Incorrect password.");
             }
