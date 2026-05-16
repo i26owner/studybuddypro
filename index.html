@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Zone | Premium Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* 1. वैश्विक थीम वैरिएबल्स (डिफॉल्ट लाइट/व्हाइट मोड) */
+        :root {
+            --bg-dark: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --sidebar-bg: #ffffff;
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.15);
+            --accent: #4f46e5;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.08);
+            --input-bg: rgba(241, 245, 249, 0.9);
+        }
+
+        /* डार्क मोड के वैरिएबल्स */
+        [data-theme="dark"] {
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(20, 27, 45, 0.7);
+            --sidebar-bg: #111827;
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.3);
+            --accent: #818cf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(15, 23, 42, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.06) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.06) 0px, transparent 50%);
+        }
+
+        [data-theme="dark"] body {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(129, 140, 242, 0.12) 0px, transparent 50%);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInHeader {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Auth Container --- */
+        .auth-container {
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+            z-index: 10;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .form-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(20px);
+        }
+
+        [data-theme="dark"] .form-box {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-box h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover { transform: translateY(-2px); }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .switch-form a { color: var(--primary); text-decoration: none; font-weight: 600; margin-left: 5px; cursor: pointer; }
+
+        /* --- Top Header --- */
+        .top-header {
+            width: 100%;
+            display: none; 
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 40px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            animation: fadeInHeader 0.5s ease both;
+        }
+
+        .header-left { display: flex; align-items: center; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .menu-btn { font-size: 22px; color: var(--text-main); cursor: pointer; margin-right: 25px; }
+        .web-title { font-size: 26px; font-weight: 800; color: var(--text-main); }
+        .web-title span { color: var(--primary); }
+
+        /* थीम चेंजर और एडमिन लॉक बटन्स */
+        .header-action-btn {
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 42px;
+            height: 42px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        [data-theme="dark"] .header-action-btn { background: rgba(255, 255, 255, 0.03); }
+
+        .header-action-btn:hover {
+            color: var(--primary);
+            background: var(--primary-glow);
+            border-color: var(--primary);
+        }
+
+        .admin-lock-btn:hover {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+        }
+
+        /* --- Sidebar Menu --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px; 
+            width: 320px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.02);
+            z-index: 2000;
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        [data-theme="dark"] .sidebar { box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+
+        .sidebar.active { left: 0; }
+
+        .close-sidebar-btn { align-self: flex-end; font-size: 20px; color: var(--text-muted); cursor: pointer; margin-bottom: 15px; }
+
+        .user-details-card {
+            background: rgba(0,0,0,0.02);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        [data-theme="dark"] .user-details-card { background: rgba(255,255,255,0.03); }
+
+        .user-profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .user-profile-header i { font-size: 32px; color: var(--primary); }
+        .user-profile-header h4 { font-size: 16px; font-weight: 600; }
+        .user-info-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+        .edit-profile-btn {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .edit-profile-btn:hover { text-decoration: underline; }
+
+        .sidebar-menu-items { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+        .menu-item-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .menu-item-link i { font-size: 16px; color: var(--text-muted); width: 20px; }
+        .menu-item-link:hover { background: var(--primary-glow); color: var(--primary); }
+        .menu-item-link:hover i { color: var(--primary); }
+
+        .premium-item {
+            background: linear-gradient(90deg, rgba(2, 132, 199, 0.06), rgba(79, 70, 229, 0.06));
+            border: 1px solid rgba(2, 132, 199, 0.15);
+        }
+        [data-theme="dark"] .premium-item {
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), rgba(129, 140, 242, 0.15));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .premium-item i { color: #f59e0b; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(4px); z-index: 1999;
+        }
+
+        /* --- Main Content Box --- */
+        .main-content {
+            display: none; width: 100%; max-width: 1200px; margin-top: 80px; padding: 40px 20px;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .horizontal-section-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 16px; padding: 25px 35px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+            transition: all 0.3s; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.01);
+        }
+        [data-theme="dark"] .horizontal-section-box {
+            background: linear-gradient(95deg, rgba(20, 27, 45, 0.9) 0%, rgba(30, 41, 59, 0.6) 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .horizontal-section-box:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .box-left-content { display: flex; align-items: center; gap: 20px; }
+        
+        .box-icon {
+            width: 50px; height: 50px; background: var(--primary-glow); border: 1px solid rgba(2, 132, 199, 0.15);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 22px;
+        }
+        
+        .box-text h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+        .box-text p { font-size: 13px; color: var(--text-muted); }
+        .box-right-arrow { font-size: 18px; color: var(--text-muted); transition: transform 0.3s; }
+        .horizontal-section-box:hover .box-right-arrow { transform: translateX(5px); color: var(--primary); }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header id="topHeader" class="top-header">
+        <div class="header-left">
+            <div class="menu-btn" onclick="openSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <h1 class="web-title">Practical<span>Zone</span></h1>
+        </div>
+        <div class="header-right">
+            <div id="themeToggleBtn" class="header-action-btn" title="Toggle Light/Dark Mode" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon"></i>
+            </div>
+            <div class="header-action-btn admin-lock-btn" title="Admin Control Center" onclick="openAdminPanel()">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+        </div>
+    </header>
+
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <nav id="mySidebar" class="sidebar">
+        <div class="close-sidebar-btn" onclick="closeSidebar()">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+
+        <div class="user-details-card">
+            <div class="user-profile-header">
+                <i class="fa-solid fa-circle-user"></i>
+                <div>
+                    <h4 id="menuUserName">Student Name</h4>
+                    <span style="font-size: 11px; color: var(--primary);">PRN: <span id="menuUserPRN">-</span></span>
+                </div>
+            </div>
+            <div class="user-info-text">
+                <p id="menuUserEmail">Email: -</p>
+                <p id="menuUserPhone">Mob: -</p>
+            </div>
+            <a onclick="openEditPage()" class="edit-profile-btn">
+                <i class="fa-solid fa-pen-to-square" style="font-size: 11px; width:auto; margin-right:4px;"></i>Edit Profile
+            </a>
+        </div>
+
+        <ul class="sidebar-menu-items">
+            <li><a onclick="openPremiumPage()" class="menu-item-link premium-item"><i class="fa-solid fa-crown"></i>Our Premium Section</a></li>
+            <li><a onclick="openMCQPage()" class="menu-item-link"><i class="fa-solid fa-list-check"></i>MCQ Section</a></li>
+            <li><a onclick="openPYQPage()" class="menu-item-link"><i class="fa-solid fa-file-invoice"></i>PYQ Section</a></li>
+            <li><a onclick="openNotesPage()" class="menu-item-link"><i class="fa-solid fa-book-open"></i>Notes Section</a></li>
+            <li><a onclick="openFeedbackPage()" class="menu-item-link"><i class="fa-solid fa-comments"></i>Feedback Section</a></li>
+        </ul>
+    </nav>
+
+    <div id="authContainer" class="auth-container">
+        <div id="registerForm" class="form-box">
+            <h2>Create New Account</h2>
+            <p class="form-subtitle">Register for your academic journey</p>
+            <form onsubmit="handleAuth(event, 'register')">
+                <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regName" placeholder="Full Name" required></div>
+                <div class="input-group"><i class="fa-solid fa-id-card"></i><input type="text" id="regPRN" placeholder="PRN Number" required></div>
+                <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email ID" required></div>
+                <div class="input-group"><i class="fa-solid fa-phone"></i><input type="tel" id="regPhone" placeholder="Mobile Number" pattern="[0-9]{10}" required></div>
+                <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPass" placeholder="Password" required></div>
+                <div class="input-group"><i class="fa-solid fa-lock-open"></i><input type="password" id="regConfirmPass" placeholder="Confirm Password" required></div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <div class="switch-form">Already have an account?<a onclick="showLogin()">Login Here</a></div>
+        </div>
+
+        <div id="loginForm" class="form-box hidden">
+            <h2>Welcome Back!</h2>
+            <p class="form-subtitle">Log in to your account</p>
+            <form onsubmit="handleAuth(event, 'login')">
+                <div class="input-group"><i class="fa-solid fa-id-card"></i><input type="text" id="loginId" placeholder="PRN Number or Email ID" required></div>
+                <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="loginPass" placeholder="Password" required></div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <div class="switch-form">New user?<a onclick="showRegister()">Create Account</a></div>
+        </div>
+    </div>
+
+    <main id="mainContent" class="main-content">
+        <div class="horizontal-section-box" onclick="openTargetFile()">
+            <div class="box-left-content">
+                <div class="box-icon"><i class="fa-solid fa-folder-open"></i></div>
+                <div class="box-text">
+                    <h3>Click Here to Proceed</h3>
+                    <p>Click on this box to open the new file and view further data.</p>
+                </div>
+            </div>
+            <div class="box-right-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // 🔐 आपका लाइव फायरबेस कॉन्फ़िगरेशन कोड
+        const firebaseConfig = {
+            apiKey: "AIzaSyCZhDPaVY7jv_hXtHdpVqUcGe1hwAxvZmc",
+            authDomain: "students-e5183.firebaseapp.com",
+            databaseURL: "https://students-e5183-default-rtdb.firebaseio.com",
+            projectId: "students-e5183",
+            storageBucket: "students-e5183.firebasestorage.app",
+            messagingSenderId: "473442117683",
+            appId: "1:473442117683:web:f39adc0665317aa95e9b46",
+            measurementId: "G-DT4XQLZJW3"
+        };
+
+        // Firebase शुरू करना
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        const authContainer = document.getElementById('authContainer');
+        const topHeader = document.getElementById('topHeader');
+        const mainContent = document.getElementById('mainContent');
+        const mySidebar = document.getElementById('mySidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function showLogin() { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
+        function showRegister() { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
+
+        // 🌓 डार्क/लाइट थीम टॉगल करने का फंक्शन (डिफॉल्ट: लाइट मोड)
+        document.documentElement.setAttribute('data-theme', 'light');
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const toggleIcon = document.querySelector('#themeToggleBtn i');
+            
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                toggleIcon.className = "fa-solid fa-moon"; // लाइट मोड में चांद दिखेगा
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                toggleIcon.className = "fa-solid fa-sun"; // डार्क मोड में सूरज दिखेगा
+            }
+        }
+
+        /* ========================================================
+           फायरबेस लाइव ऑथेंटिकेशन (Email या PRN दोनों के साथ वर्किंग)
+           ======================================================== */
+        function handleAuth(event, type) {
+            event.preventDefault(); // फॉर्म रीफ्रेश क्रैश रोकता है
+            
+            if(type === 'register') {
+                const name = document.getElementById('regName').value.trim();
+                const prn = document.getElementById('regPRN').value.trim();
+                const email = document.getElementById('regEmail').value.trim().toLowerCase();
+                const phone = document.getElementById('regPhone').value.trim();
+                const pass = document.getElementById('regPass').value;
+                const confirmPass = document.getElementById('regConfirmPass').value;
+                
+                if(pass !== confirmPass) { alert("Passwords do not match!"); return; }
+                
+                // आपके फायरबेस पाथ `users/PRN` के अंदर स्टूडेंट का डेटा स्टोर करना
+                database.ref('users/' + prn).set({
+                    name: name,
+                    prn: prn,
+                    email: email,
+                    phone: phone,
+                    password: pass
+                }).then(() => {
+                    alert("Registration Successful! Account details stored in Firebase.");
+                    loadStudentDashboard(name, prn, email, phone);
+                }).catch((error) => {
+                    alert("Firebase Database Error: " + error.message);
+                });
+
+            } else {
+                const loginInput = document.getElementById('loginId').value.trim().toLowerCase();
+                const loginPassword = document.getElementById('loginPass').value;
+                
+                // 'users' नोड को पढ़ना ताकि PRN नंबर या ईमेल आईडी दोनों से जांच की जा सके
+                database.ref('users').once('value').then((snapshot) => {
+                    let studentFound = null;
+                    let studentPRN = null;
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        const userData = childSnapshot.val();
+                        // यदि इनपुट PRN से मैच हो या स्टोर किए गए ईमेल आईडी से मैच हो
+                        if (childSnapshot.key === loginInput || (userData.email && userData.email === loginInput)) {
+                            studentFound = userData;
+                            studentPRN = childSnapshot.key;
+                        }
+                    });
+
+                    if (studentFound) {
+                        if (studentFound.password === loginPassword) {
+                            alert(`Welcome back, ${studentFound.name}!`);
+                            loadStudentDashboard(studentFound.name, studentPRN, studentFound.email, studentFound.phone);
+                        } else {
+                            alert("Access Denied: Incorrect Password!");
+                        }
+                    } else {
+                        alert("Access Denied: No account found with this PRN Number or Email ID!");
+                    }
+                }).catch((err) => {
+                    console.error(err);
+                    alert("Error reaching Firebase Database server!");
+                });
+            }
+        }
+
+        function loadStudentDashboard(name, prn, email, phone) {
+            document.getElementById('menuUserName').innerText = name;
+            document.getElementById('menuUserPRN').innerText = prn;
+            document.getElementById('menuUserEmail').innerText = "Email: " + email;
+            document.getElementById('menuUserPhone').innerText = "Mob: " + phone;
+            
+            authContainer.classList.add('hidden');
+            document.body.style.justifyContent = 'flex-start';
+            topHeader.style.display = 'flex';
+            mainContent.style.display = 'block';
+        }
+
+        function openSidebar() { mySidebar.classList.add('active'); sidebarOverlay.style.display = 'block'; }
+        function closeSidebar() { mySidebar.classList.remove('active'); sidebarOverlay.style.display = 'none'; }
+
+        function openEditPage() { window.location.href = "edit-profile.html"; }
+
+        function openAdminPanel() {
+            let secretKey = prompt("🔐 Admin Login: Please enter security password:");
+            if (secretKey === "123") {
+                alert("🔓 Password correct! Admin Panel is opening in a new window...");
+                window.open("admin.html", "_blank"); 
+            } else if (secretKey !== null) {
+                alert("❌ Access denied! Incorrect password.");
+            }
+        }
+
+        function openPremiumPage() { window.location.href = "premium-section.html"; }
+        function openMCQPage() { window.location.href = "mcq-file.html"; }
+        function openPYQPage() { window.location.href = "pyq-file.html"; }
+        function openNotesPage() { window.location.href = "notes-file.html"; }
+        function openFeedbackPage() { window.location.href = "feedback-file.html"; }
+        function openTargetFile() { window.location.href = "your-file-name.html"; }
+    </script>
+</body>
+</html>
