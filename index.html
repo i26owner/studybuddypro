@@ -75,13 +75,27 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes buttonShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+            20%, 40%, 60%, 80% { transform: translateX(6px); }
+        }
+
+        .shake-animation {
+            animation: buttonShake 0.5s ease-in-out !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.1) !important;
+        }
+
         /* --- Auth Container --- */
         .auth-container {
             width: 100%;
             max-width: 460px;
             padding: 20px;
-            z-index: 10;
+            z-index: 50; 
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            position: relative;
         }
 
         .form-box {
@@ -91,6 +105,7 @@
             padding: 35px 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
             backdrop-filter: blur(20px);
+            position: relative;
         }
 
         [data-theme="dark"] .form-box {
@@ -145,6 +160,25 @@
             box-shadow: 0 0 0 4px var(--primary-glow);
         }
 
+        .forgot-link-container {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link-container a {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .forgot-link-container a:hover {
+            color: var(--primary);
+        }
+
         .submit-btn {
             width: 100%;
             padding: 15px;
@@ -156,9 +190,23 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            position: relative;
+            z-index: 55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .submit-btn:hover { transform: translateY(-2px); }
+        .submit-btn:disabled { opacity: 0.8; cursor: not-allowed; transform: none; }
+
+        .btn-spinner {
+            width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff; border-radius: 50%; animation: spin 0.75s linear infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .switch-form {
             text-align: center;
@@ -167,7 +215,15 @@
             color: var(--text-muted);
         }
 
-        .switch-form a { color: var(--primary); text-decoration: none; font-weight: 600; margin-left: 5px; cursor: pointer; }
+        .switch-form a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            font-weight: 600; 
+            margin-left: 5px; 
+            cursor: pointer; 
+            display: inline-block;
+            padding: 2px 5px;
+        }
 
         /* --- Top Header --- */
         .top-header {
@@ -181,7 +237,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 1000;
+            z-index: 1000; 
             animation: fadeInHeader 0.5s ease both;
         }
 
@@ -192,7 +248,6 @@
         .web-title { font-size: 26px; font-weight: 800; color: var(--text-main); }
         .web-title span { color: var(--primary); }
 
-        /* थीम चेंजर और एडमिन लॉक बटन्स */
         .header-action-btn {
             font-size: 18px;
             color: var(--text-muted);
@@ -335,6 +390,91 @@
         .horizontal-section-box:hover .box-right-arrow { transform: translateX(5px); color: var(--primary); }
 
         .hidden { display: none !important; }
+
+        /* Premium UI Elements */
+        .premium-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px);
+            z-index: 5000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .premium-modal-card {
+            background: var(--sidebar-bg); border: 1px solid var(--border);
+            width: 90%; max-width: 400px; padding: 30px; border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15); transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); text-align: center;
+        }
+        [data-theme="dark"] .premium-modal-card { box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .premium-modal-overlay.active .premium-modal-card { transform: translateY(0) scale(1); }
+
+        .modal-icon-header {
+            width: 60px; height: 60px; background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2); color: #f59e0b;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin: 0 auto 20px auto;
+        }
+
+        .premium-modal-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .premium-modal-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+        .modal-password-input {
+            width: 100%; padding: 14px 16px; background: var(--input-bg);
+            border: 1px solid var(--border); border-radius: 12px; color: var(--text-main);
+            font-size: 14px; text-align: center; outline: none; margin-bottom: 20px; transition: all 0.3s;
+        }
+        .modal-password-input:focus { border-color: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15); }
+
+        .modal-btn-group { display: flex; gap: 12px; }
+        .modal-btn {
+            flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600;
+            cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .modal-btn-cancel { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
+        .modal-btn-cancel:hover { background: rgba(0,0,0,0.05); }
+        
+        .modal-btn-confirm { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .modal-btn-confirm:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
+
+        .premium-toast {
+            position: fixed; bottom: -100px; right: 20px; background: #ffffff;
+            border-radius: 18px; padding: 18px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: flex; align-items: center;
+            gap: 16px; z-index: 6000; transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 440px; width: calc(100% - 40px); pointer-events: none; opacity: 0;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .premium-toast { background: #1e293b; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .premium-toast.active { bottom: 30px; opacity: 1; pointer-events: auto; }
+
+        .toast-error { border-left: 5px solid #ef4444; }
+        .toast-error .toast-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .toast-error h4 { color: #ef4444; }
+
+        .toast-success { border-left: 5px solid #10b981; }
+        .toast-success .toast-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .toast-success h4 { color: #10b981; }
+
+        .toast-icon {
+            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 16px; flex-shrink: 0;
+        }
+        .toast-content { flex-grow: 1; }
+        .toast-content h4 { font-weight: 700; margin-bottom: 2px; }
+        .toast-content p { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+
+        .toast-progress-bar {
+            position: absolute; bottom: 0; left: 0; height: 3px; background: #10b981;
+            width: 100%; transform-origin: left; transform: scaleX(0);
+        }
+        .premium-toast.active .toast-progress-bar {
+            animation: progressCollapse 2.2s linear forwards;
+        }
+        @keyframes progressCollapse {
+            from { transform: scaleX(1); }
+            to { transform: scaleX(0); }
+        }
     </style>
 </head>
 <body>
@@ -347,10 +487,10 @@
             <h1 class="web-title">Practical<span>Zone</span></h1>
         </div>
         <div class="header-right">
-            <div id="themeToggleBtn" class="header-action-btn" title="Toggle Light/Dark Mode" onclick="toggleTheme()">
+            <div id="themeToggleBtn" class="header-action-btn" onclick="toggleTheme()">
                 <i class="fa-solid fa-moon"></i>
             </div>
-            <div class="header-action-btn admin-lock-btn" title="Admin Control Center" onclick="openAdminPanel()">
+            <div id="adminLockBtn" class="header-action-btn admin-lock-btn" onclick="openAdminPanel()">
                 <i class="fa-solid fa-lock"></i>
             </div>
         </div>
@@ -374,9 +514,7 @@
                 <p id="menuUserEmail">Email: -</p>
                 <p id="menuUserPhone">Mob: -</p>
             </div>
-            <a onclick="openEditPage()" class="edit-profile-btn">
-                <i class="fa-solid fa-pen-to-square" style="font-size: 11px; width:auto; margin-right:4px;"></i>Edit Profile
-            </a>
+            <a onclick="openEditPage()" class="edit-profile-btn"><i class="fa-solid fa-pen-to-square" style="font-size: 11px; margin-right:4px;"></i>Edit Profile</a>
         </div>
 
         <ul class="sidebar-menu-items">
@@ -392,14 +530,14 @@
         <div id="registerForm" class="form-box">
             <h2>Create New Account</h2>
             <p class="form-subtitle">Register for your academic journey</p>
-            <form onsubmit="handleAuth(event, 'register')">
+            <form id="regFormElement" onsubmit="handleAuth(event, 'register')">
                 <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="regName" placeholder="Full Name" required></div>
                 <div class="input-group"><i class="fa-solid fa-id-card"></i><input type="text" id="regPRN" placeholder="PRN Number" required></div>
                 <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="regEmail" placeholder="Email ID" required></div>
                 <div class="input-group"><i class="fa-solid fa-phone"></i><input type="tel" id="regPhone" placeholder="Mobile Number" pattern="[0-9]{10}" required></div>
                 <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="regPass" placeholder="Password" required></div>
                 <div class="input-group"><i class="fa-solid fa-lock-open"></i><input type="password" id="regConfirmPass" placeholder="Confirm Password" required></div>
-                <button type="submit" class="submit-btn">Sign Up</button>
+                <button type="submit" id="regSubmitBtn" class="submit-btn"><span class="btn-spinner"></span><span class="btn-text">Sign Up</span></button>
             </form>
             <div class="switch-form">Already have an account?<a onclick="showLogin()">Login Here</a></div>
         </div>
@@ -407,12 +545,27 @@
         <div id="loginForm" class="form-box hidden">
             <h2>Welcome Back!</h2>
             <p class="form-subtitle">Log in to your account</p>
-            <form onsubmit="handleAuth(event, 'login')">
+            <form id="loginFormElement" onsubmit="handleAuth(event, 'login')">
                 <div class="input-group"><i class="fa-solid fa-id-card"></i><input type="text" id="loginId" placeholder="PRN Number or Email ID" required></div>
-                <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="loginPass" placeholder="Password" required></div>
-                <button type="submit" class="submit-btn">Login</button>
+                <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="loginPass" placeholder="Password" onpaste="handleSmartPaste(event)" required></div>
+                
+                <div class="forgot-link-container">
+                    <a onclick="showForgotPassword()">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" id="loginSubmitBtn" class="submit-btn"><span class="btn-spinner"></span><span class="btn-text">Login</span></button>
             </form>
             <div class="switch-form">New user?<a onclick="showRegister()">Create Account</a></div>
+        </div>
+
+        <div id="forgotForm" class="form-box hidden">
+            <h2>Reset Password</h2>
+            <p class="form-subtitle">Enter your registered email to receive verification link</p>
+            <form id="forgotFormElement" onsubmit="handleForgotPasswordSubmit(event)">
+                <div class="input-group"><i class="fa-solid fa-envelope"></i><input type="email" id="forgotEmail" placeholder="Enter Registered Email ID" required></div>
+                <button type="submit" id="forgotSubmitBtn" class="submit-btn"><span class="btn-spinner"></span><span class="btn-text">Send Reset Link</span></button>
+            </form>
+            <div class="switch-form">Remember password?<a onclick="showLogin()">Back to Login</a></div>
         </div>
     </div>
 
@@ -429,58 +582,89 @@
         </div>
     </main>
 
+    <div id="premiumAdminModal" class="premium-modal-overlay">
+        <div class="premium-modal-card">
+            <div class="modal-icon-header"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3>Admin Identity Control</h3>
+            <p>Please enter your master security password to securely unlock the control center.</p>
+            <input type="password" id="modalAdminPassword" class="modal-password-input" placeholder="••••••••" autocomplete="off">
+            <div class="modal-btn-group">
+                <button class="modal-btn modal-btn-cancel" onclick="closeAdminModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="verifyAdminPasswordSubmit()">Verify Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="universalPremiumToast" class="premium-toast toast-error">
+        <div class="toast-icon"><i id="toastIconElement" class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="toast-content">
+            <h4 id="toastHeaderTitle">Access Denied!</h4>
+            <p id="toastMessageText">You don't have permission to access this area.</p>
+        </div>
+        <div class="toast-progress-bar"></div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // 🔐 आपका लाइव फायरबेस कॉन्फ़िगरेशन कोड
+        // 🔒 आपका लाइव और बिल्कुल सही फ़ायरबेस कॉन्फ़िगरेशन
         const firebaseConfig = {
-            apiKey: "AIzaSyCZhDPaVY7jv_hXtHdpVqUcGe1hwAxvZmc",
-            authDomain: "students-e5183.firebaseapp.com",
-            databaseURL: "https://students-e5183-default-rtdb.firebaseio.com",
-            projectId: "students-e5183",
-            storageBucket: "students-e5183.firebasestorage.app",
-            messagingSenderId: "473442117683",
-            appId: "1:473442117683:web:f39adc0665317aa95e9b46",
-            measurementId: "G-DT4XQLZJW3"
+          apiKey: "AIzaSyCZhDPaVY7jv_hXtHdpVqUcGe1hwAxvZmc",
+          authDomain: "students-e5183.firebaseapp.com",
+          databaseURL: "https://students-e5183-default-rtdb.firebaseio.com",
+          projectId: "students-e5183",
+          storageBucket: "students-e5183.firebasestorage.app",
+          messagingSenderId: "473442117683",
+          appId: "1:473442117683:web:f39adc0665317aa95e9b46",
+          measurementId: "G-DT4XQLZJW3"
         };
 
-        // Firebase शुरू करना
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const auth = firebase.auth();
 
         const registerForm = document.getElementById('registerForm');
         const loginForm = document.getElementById('loginForm');
+        const forgotForm = document.getElementById('forgotForm');
         const authContainer = document.getElementById('authContainer');
         const topHeader = document.getElementById('topHeader');
         const mainContent = document.getElementById('mainContent');
         const mySidebar = document.getElementById('mySidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        function showLogin() { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
-        function showRegister() { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
+        let currentLoggedPRN = "";
+        let verifiedAdminData = null; 
 
-        // 🌓 डार्क/लाइट थीम टॉगल करने का फंक्शन (डिफॉल्ट: लाइट मोड)
+        function showLogin() { registerForm.classList.add('hidden'); forgotForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
+        function showRegister() { loginForm.classList.add('hidden'); forgotForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
+        function showForgotPassword() { loginForm.classList.add('hidden'); registerForm.classList.add('hidden'); forgotForm.classList.remove('hidden'); }
+
         document.documentElement.setAttribute('data-theme', 'light');
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const toggleIcon = document.querySelector('#themeToggleBtn i');
-            
             if (currentTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'light');
-                toggleIcon.className = "fa-solid fa-moon"; // लाइट मोड में चांद दिखेगा
+                toggleIcon.className = "fa-solid fa-moon"; 
             } else {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                toggleIcon.className = "fa-solid fa-sun"; // डार्क मोड में सूरज दिखेगा
+                toggleIcon.className = "fa-solid fa-sun"; 
             }
         }
 
-        /* ========================================================
-           फायरबेस लाइव ऑथेंटिकेशन (Email या PRN दोनों के साथ वर्किंग)
-           ======================================================== */
+        function handleSmartPaste(event) {
+            setTimeout(() => {
+                if (document.getElementById('loginId').value.trim() !== "" && document.getElementById('loginPass').value !== "") {
+                    handleAuth(new Event('submit'), 'login');
+                }
+            }, 200);
+        }
+
         function handleAuth(event, type) {
-            event.preventDefault(); // फॉर्म रीफ्रेश क्रैश रोकता है
+            event.preventDefault(); 
             
             if(type === 'register') {
                 const name = document.getElementById('regName').value.trim();
@@ -490,34 +674,48 @@
                 const pass = document.getElementById('regPass').value;
                 const confirmPass = document.getElementById('regConfirmPass').value;
                 
-                if(pass !== confirmPass) { alert("Passwords do not match!"); return; }
+                if(pass !== confirmPass) { 
+                    showPremiumNotification("Error Alert!", "Passwords do not match!", true); 
+                    return; 
+                }
+
+                setBtnLoading('regSubmitBtn', true, "Registering...");
                 
-                // आपके फायरबेस पाथ `users/PRN` के अंदर स्टूडेंट का डेटा स्टोर करना
-                database.ref('users/' + prn).set({
-                    name: name,
-                    prn: prn,
-                    email: email,
-                    phone: phone,
-                    password: pass
+                // Auth + Realtime Database सिंक सबमिशन
+                auth.createUserWithEmailAndPassword(email, pass).then((userCredential) => {
+                    return database.ref('users/' + prn).set({
+                        name: name,
+                        prn: prn,
+                        email: email,
+                        phone: phone,
+                        password: pass,
+                        role: "student"
+                    });
                 }).then(() => {
-                    alert("Registration Successful! Account details stored in Firebase.");
-                    loadStudentDashboard(name, prn, email, phone);
+                    setTimeout(() => {
+                        setBtnLoading('regSubmitBtn', false, "Sign Up");
+                        showPremiumNotification("Successfully Joined! 🎉", `Welcome aboard, ${name}!`, false);
+                        loadStudentDashboard(name, prn, email, phone);
+                    }, 2000);
                 }).catch((error) => {
-                    alert("Firebase Database Error: " + error.message);
+                    setBtnLoading('regSubmitBtn', false, "Sign Up");
+                    showPremiumNotification("Registration Error", error.message, true);
                 });
 
             } else {
                 const loginInput = document.getElementById('loginId').value.trim().toLowerCase();
                 const loginPassword = document.getElementById('loginPass').value;
+
+                if (!loginInput || !loginPassword) return;
+
+                setBtnLoading('loginSubmitBtn', true, "Verifying...");
                 
-                // 'users' नोड को पढ़ना ताकि PRN नंबर या ईमेल आईडी दोनों से जांच की जा सके
                 database.ref('users').once('value').then((snapshot) => {
                     let studentFound = null;
                     let studentPRN = null;
                     
                     snapshot.forEach((childSnapshot) => {
                         const userData = childSnapshot.val();
-                        // यदि इनपुट PRN से मैच हो या स्टोर किए गए ईमेल आईडी से मैच हो
                         if (childSnapshot.key === loginInput || (userData.email && userData.email === loginInput)) {
                             studentFound = userData;
                             studentPRN = childSnapshot.key;
@@ -525,28 +723,77 @@
                     });
 
                     if (studentFound) {
-                        if (studentFound.password === loginPassword) {
-                            alert(`Welcome back, ${studentFound.name}!`);
-                            loadStudentDashboard(studentFound.name, studentPRN, studentFound.email, studentFound.phone);
-                        } else {
-                            alert("Access Denied: Incorrect Password!");
-                        }
+                        // लाइव क्रेडेंशियल वेरिफिकेशन
+                        auth.signInWithEmailAndPassword(studentFound.email, loginPassword).then((userCredential) => {
+                            if(studentFound.password !== loginPassword) {
+                                database.ref('users/' + studentPRN).update({ password: loginPassword });
+                            }
+                            setTimeout(() => {
+                                setBtnLoading('loginSubmitBtn', false, "Login");
+                                showPremiumNotification("Login Successful! 🔓", `Welcome back!`, false);
+                                loadStudentDashboard(studentFound.name, studentPRN, studentFound.email, studentFound.phone);
+                            }, 1000);
+                        }).catch((authError) => {
+                            setBtnLoading('loginSubmitBtn', false, "Login");
+                            if(authError.code === "auth/wrong-password") {
+                                showPremiumNotification("Access Denied!", "Incorrect Password!", true);
+                            } else {
+                                showPremiumNotification("Authentication Failed", authError.message, true);
+                            }
+                        });
                     } else {
-                        alert("Access Denied: No account found with this PRN Number or Email ID!");
+                        setBtnLoading('loginSubmitBtn', false, "Login");
+                        showPremiumNotification("Account Not Found", "No account associated with this ID.", true);
                     }
                 }).catch((err) => {
-                    console.error(err);
-                    alert("Error reaching Firebase Database server!");
+                    setBtnLoading('loginSubmitBtn', false, "Login");
+                    showPremiumNotification("Network Failure", "Error reaching server!", true);
                 });
             }
         }
 
+        function handleForgotPasswordSubmit(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            if (!emailInput) return;
+
+            setBtnLoading('forgotSubmitBtn', true, "Sending Link...");
+
+            auth.sendPasswordResetEmail(emailInput).then(() => {
+                setTimeout(() => {
+                    setBtnLoading('forgotSubmitBtn', false, "Send Reset Link");
+                    showPremiumNotification("Email Sent! ✉️", "Password verification link has been sent.", false);
+                    document.getElementById('forgotFormElement').reset();
+                    showLogin(); 
+                }, 2000);
+            }).catch((error) => {
+                setBtnLoading('forgotSubmitBtn', false, "Send Reset Link");
+                showPremiumNotification("Firebase Error", error.message, true);
+            });
+        }
+
+        function setBtnLoading(btnId, isLoading, textValue) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            const spinner = btn.querySelector('.btn-spinner');
+            const text = btn.querySelector('.btn-text');
+            if (isLoading) {
+                btn.disabled = true;
+                if (spinner) spinner.style.display = 'inline-block';
+                if (text) text.innerText = textValue;
+            } else {
+                btn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+                if (text) text.innerText = textValue;
+            }
+        }
+
         function loadStudentDashboard(name, prn, email, phone) {
+            currentLoggedPRN = prn;
             document.getElementById('menuUserName').innerText = name;
             document.getElementById('menuUserPRN').innerText = prn;
             document.getElementById('menuUserEmail').innerText = "Email: " + email;
             document.getElementById('menuUserPhone').innerText = "Mob: " + phone;
-            
             authContainer.classList.add('hidden');
             document.body.style.justifyContent = 'flex-start';
             topHeader.style.display = 'flex';
@@ -555,18 +802,65 @@
 
         function openSidebar() { mySidebar.classList.add('active'); sidebarOverlay.style.display = 'block'; }
         function closeSidebar() { mySidebar.classList.remove('active'); sidebarOverlay.style.display = 'none'; }
-
         function openEditPage() { window.location.href = "edit.html"; }
 
         function openAdminPanel() {
-            let secretKey = prompt("🔐 Admin Login: Please enter security password:");
-            if (secretKey === "i26") {
-                alert("🔓 Password correct! Admin Panel is opening in a new window...");
-                window.open("admin.html", "_blank"); 
-            } else if (secretKey !== null) {
-                alert("❌ Access denied! Incorrect password.");
+            const lockBtn = document.getElementById('adminLockBtn');
+            if (!currentLoggedPRN) { triggerAccessDeniedEffect(lockBtn); return; }
+
+            database.ref('users/' + currentLoggedPRN).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    if (userData.role && userData.role.toLowerCase() === "admin") {
+                        verifiedAdminData = userData; 
+                        document.getElementById('modalAdminPassword').value = ""; 
+                        document.getElementById('premiumAdminModal').classList.add('active');
+                        document.getElementById('modalAdminPassword').focus();
+                    } else { triggerAccessDeniedEffect(lockBtn); }
+                } else { triggerAccessDeniedEffect(lockBtn); }
+            }).catch(() => { showPremiumNotification("Server Error", "Database Error!", true); });
+        }
+
+        function triggerAccessDeniedEffect(element) {
+            element.classList.add('shake-animation');
+            setTimeout(() => { element.classList.remove('shake-animation'); }, 500);
+            showPremiumNotification("Access Denied!", "This section is for Administrators only.", true);
+        }
+
+        function showPremiumNotification(title, message, isError) {
+            const toast = document.getElementById('universalPremiumToast');
+            const icon = document.getElementById('toastIconElement');
+            const header = document.getElementById('toastHeaderTitle');
+            const desc = document.getElementById('toastMessageText');
+            header.innerText = title; desc.innerText = message;
+            if (isError) {
+                toast.className = "premium-toast toast-error active";
+                icon.className = "fa-solid fa-triangle-exclamation";
+            } else {
+                toast.className = "premium-toast toast-success active";
+                icon.className = "fa-solid fa-circle-check";
+            }
+            setTimeout(() => { toast.classList.remove('active'); }, 2500);
+        }
+
+        function closeAdminModal() { document.getElementById('premiumAdminModal').classList.remove('active'); }
+
+        function verifyAdminPasswordSubmit() {
+            const enteredPass = document.getElementById('modalAdminPassword').value;
+            if (!enteredPass) return;
+            if (verifiedAdminData && enteredPass === verifiedAdminData.password) {
+                closeAdminModal();
+                showPremiumNotification("Identity Verified", "Opening Admin Hub...", false);
+                setTimeout(() => { window.open("admin.html", "_blank"); }, 400);
+            } else {
+                showPremiumNotification("Security Alert", "Incorrect Password!", true);
+                document.getElementById('modalAdminPassword').value = "";
             }
         }
+
+        document.getElementById('modalAdminPassword').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') { verifyAdminPasswordSubmit(); }
+        });
 
         function openPremiumPage() { window.location.href = "premium-section.html"; }
         function openMCQPage() { window.location.href = "mcq-file.html"; }
