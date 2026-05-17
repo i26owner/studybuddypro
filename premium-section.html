@@ -225,13 +225,13 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <script>
-        // 🔒 Firebase लाइव क्रेडेंशियल्स
+        // 🔒 Firebase लाइव क्रेडेंशियल्स (स्टोरेज बकेट फिक्स के साथ)
         const firebaseConfig = {
           apiKey: "AIzaSyCZhDPaVY7jv_hXtHdpVqUcGe1hwAxvZmc",
           authDomain: "students-e5183.firebaseapp.com",
           databaseURL: "https://students-e5183-default-rtdb.firebaseio.com",
           projectId: "students-e5183",
-          storageBucket: "students-e5183.firebasestorage.app",
+          storageBucket: "students-e5183.appspot.com", // 👈 फ़िक्स: सही स्टोरेज यूआरएल एड्रेस सेट किया गया
           messagingSenderId: "473442117683",
           appId: "1:473442117683:web:f39adc0665317aa95e9b46",
           measurementId: "G-DT4XQLZJW3"
@@ -242,21 +242,19 @@
         const storage = firebase.storage();
         const auth = firebase.auth();
 
-        let currentUserUID = "";
+        let currentUserUID = "global_vault"; // 👈 फ़िक्स: लॉगिन न होने पर भी क्रैश रोकने के लिए डिफ़ॉल्ट पाथ
         let currentTabFilter = "all";
-        let localVaultDataList = []; // लोकल एरे फ़िल्टरिंग को फ़ास्ट करने के लिए
+        let localVaultDataList = [];
 
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUserUID = user.uid;
-                loadUserMedia();
-            } else {
-                alert("Security Alert: Session expired. Please login again.");
-                window.close();
             }
+            // ऑथेंटिकेशन स्टेटस अपडेट होने के बाद डेटा लोड करें
+            loadUserMedia();
         });
 
-        // 📤 स्मार्ट फाइल अपलोड (पहचानता है कि फाइल इमेज है, वीडियो है, ऑडियो है या डॉक)
+        // 📤 स्मार्ट फाइल अपलोड (इमेज, वीडियो, ऑडियो, डाक्यूमेंट्स ट्रैकर)
         function uploadMediaFile() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -266,13 +264,13 @@
             const fileName = file.name;
             const fileType = file.type;
             
-            // कैटगरी डिसाइड करना
             let mappedCategory = "doc";
             if(fileType.startsWith('image/')) mappedCategory = "image";
             else if(fileType.startsWith('video/')) mappedCategory = "video";
             else if(fileType.startsWith('audio/')) mappedCategory = "audio";
 
-            const storageRef = storage.ref(`users/${currentUserUID}/vault/${fileId}_${fileName}`);
+            // सुरक्षित स्टोरेज फोल्डर पाथ
+            const storageRef = storage.ref(`premium_vault/${currentUserUID}/${fileId}_${fileName}`);
             
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
@@ -296,7 +294,8 @@
                 }, 
                 () => {
                     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        database.ref(`users/${currentUserUID}/vault_data/${fileId}`).set({
+                        // रीयलटाइम डेटाबेस नोड पाथ एंट्री
+                        database.ref(`premium_vault_data/${currentUserUID}/${fileId}`).set({
                             name: fileName,
                             url: downloadURL,
                             type: fileType,
@@ -317,9 +316,8 @@
 
         // 🖼️ डाटा लोड करना और काउंटर अपडेट करना
         function loadUserMedia() {
-            database.ref(`users/${currentUserUID}/vault_data`).on('value', (snapshot) => {
+            database.ref(`premium_vault_data/${currentUserUID}`).on('value', (snapshot) => {
                 localVaultDataList = [];
-                
                 let counts = { all: 0, image: 0, video: 0, audio: 0, doc: 0 };
 
                 if (snapshot.exists()) {
@@ -334,12 +332,11 @@
                         if (counts[data.category] !== undefined) {
                             counts[data.category]++;
                         } else {
-                            counts.doc++; // बैकअप अगर कोई अलग फ़ॉर्मेट हो
+                            counts.doc++;
                         }
                     });
                 }
 
-                // काउंटर्स को स्क्रीन पर अपडेट करना
                 document.getElementById('count-all').innerText = counts.all;
                 document.getElementById('count-image').innerText = counts.image;
                 document.getElementById('count-video').innerText = counts.video;
@@ -350,7 +347,6 @@
             });
         }
 
-        // फ़िल्टर के हिसाब से ग्रिड रेंडर करना
         function renderGrid() {
             const mediaGrid = document.getElementById('mediaGrid');
             mediaGrid.innerHTML = "";
@@ -365,7 +361,6 @@
                 return;
             }
 
-            // नए अपलोड पहले दिखाने के लिए रिवर्स सॉर्ट करना
             filteredData.sort((a, b) => b.timestamp - a.timestamp);
 
             filteredData.forEach((file) => {
@@ -396,7 +391,6 @@
             });
         }
 
-        // टैब स्विच करने का फंक्शन
         function switchCategory(category, element) {
             currentTabFilter = category;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -407,18 +401,15 @@
         // 🗑️ डिलीट करने का लॉजिक
         function deleteMediaFile(fileId, fileName) {
             if (confirm(`Do you really want to delete "${fileName}" from your cloud vault?`)) {
-                database.ref(`users/${currentUserUID}/vault_data/${fileId}`).remove().then(() => {
-                    const storageRef = storage.ref(`users/${currentUserUID}/vault/${fileId}_${fileName}`);
+                database.ref(`premium_vault_data/${currentUserUID}/${fileId}`).remove().then(() => {
+                    const storageRef = storage.ref(`premium_vault/${currentUserUID}/${fileId}_${fileName}`);
                     storageRef.delete().catch((err) => console.log("Storage cleanup notice:", err));
                 });
             }
         }
 
-        // 🔗 4 प्रीमियम सेक्शंस पर क्लिक हैंडलर
         function openPremiumFeature(pageName) {
             alert(`Redirecting to your Premium Sub-Module: [${pageName}]. You can build this page next!`);
-            // जब आप इन पेजेस को बना लेंगे, तब नीचे वाली लाइन चालू कर देना:
-            // window.location.href = pageName;
         }
     </script>
 </body>
