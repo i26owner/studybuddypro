@@ -631,7 +631,7 @@
         .glass-side p { color: var(--text-muted); }
         .glass-center p { color: #475569; }
 
-        /* 🍃 स्टडी बडी प्रो - प्रीमियम ट्रांसपेरेंट फुटर सीएसएस (लॉगिन प्रोटेक्टेड) */
+        /* --- प्रीमियम ट्रांसपेरेंट फुटर सीएसएस (लॉगिन प्रोटेक्टेड) */
         .premium-footer {
             display: none; 
             width: 100%;
@@ -921,22 +921,22 @@
         </a>
 
         <div class="premium-triple-container">
-            <div class="glass-premium-box glass-side" onclick="handlePremiumBoxClick('Analytics')">
-                <i class="fa-solid fa-chart-pie"></i>
-                <h4>Analytics Hub</h4>
-                <p>Track your core academic progress stats.</p>
+            <div class="glass-premium-box glass-side" onclick="handlePremiumBoxClick('StudyMaterial')">
+                <i class="fa-solid fa-book"></i>
+                <h4>स्टडी मटेरियल</h4>
+                <p>सभी महत्वपूर्ण विषयों की अध्ययन सामग्री।</p>
             </div>
 
-            <div class="glass-premium-box glass-center" onclick="handlePremiumBoxClick('Vault')">
-                <i class="fa-solid fa-vault"></i>
-                <h4>Secure Cloud Vault</h4>
-                <p>Access encrypted personal storage room.</p>
+            <div class="glass-premium-box glass-center" onclick="handlePremiumBoxClick('HandwrittenNotes')">
+                <i class="fa-solid fa-pen-nib"></i>
+                <h4>हैंड रिटन नोट्स</h4>
+                <p>शिक्षकों और टॉपर्स द्वारा तैयार हस्तलिखित नोट्स।</p>
             </div>
 
-            <div class="glass-premium-box glass-side" onclick="handlePremiumBoxClick('Resources')">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <h4>AI Smart Center</h4>
-                <p>Unlock fast automated learning notes.</p>
+            <div class="glass-premium-box glass-side" onclick="handlePremiumBoxClick('PYQQuestionBank')">
+                <i class="fa-solid fa-cubes"></i>
+                <h4>पी वाई क्यू एंड क्वेश्चन बैंक</h4>
+                <p>पिछले वर्षों के प्रश्न पत्र और महत्वपूर्ण प्रश्न सेट।</p>
             </div>
         </div>
     </main>
@@ -1323,7 +1323,15 @@
         });
 
         function handlePremiumBoxClick(boxName) {
-            showPremiumNotification("Sub-Module Launch", `Redirecting to Study Buddy Pro [${boxName}] features...`, false);
+            if (boxName === 'StudyMaterial') {
+                window.location.href = "study-material.html";
+            } else if (boxName === 'HandwrittenNotes') {
+                window.location.href = "handwritten-notes.html";
+            } else if (boxName === 'PYQQuestionBank') {
+                window.location.href = "pyq-question-bank.html";
+            } else {
+                showPremiumNotification("Sub-Module Launch", `Redirecting to Study Buddy Pro [${boxName}] features...`, false);
+            }
         }
 
         function openMCQPage() { window.location.href = "mcq-file.html"; }
