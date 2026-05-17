@@ -353,6 +353,14 @@
         }
         .premium-item i { color: #f59e0b; }
 
+        /* 👑 मास्टर रोल के लिए स्पेशल गोल्डन स्टाइल बटन */
+        .master-item {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08));
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+        .master-item i { color: #d97706; }
+        .master-item:hover { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+
         .sidebar-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(4px); z-index: 1999;
@@ -518,6 +526,8 @@
         </div>
 
         <ul class="sidebar-menu-items">
+            <li id="masterMenuRow" class="hidden"><a onclick="openAdmin2Page()" class="menu-item-link master-item"><i class="fa-solid fa-user-gear"></i>Admin 2 Controls</a></li>
+            
             <li><a onclick="openPremiumPage()" class="menu-item-link premium-item"><i class="fa-solid fa-crown"></i>Our Premium Section</a></li>
             <li><a onclick="openMCQPage()" class="menu-item-link"><i class="fa-solid fa-list-check"></i>MCQ Section</a></li>
             <li><a onclick="openPYQPage()" class="menu-item-link"><i class="fa-solid fa-file-invoice"></i>PYQ Section</a></li>
@@ -585,7 +595,7 @@
     <div id="premiumAdminModal" class="premium-modal-overlay">
         <div class="premium-modal-card">
             <div class="modal-icon-header"><i class="fa-solid fa-shield-halved"></i></div>
-            <h3>Admin Identity Control</h3>
+            <h3>Security Verification</h3>
             <p>Please enter your master security password to securely unlock the control center.</p>
             <input type="password" id="modalAdminPassword" class="modal-password-input" placeholder="••••••••" autocomplete="off">
             <div class="modal-btn-group">
@@ -681,7 +691,6 @@
 
                 setBtnLoading('regSubmitBtn', true, "Registering...");
                 
-                // Auth + Realtime Database सिंक सबमिशन
                 auth.createUserWithEmailAndPassword(email, pass).then((userCredential) => {
                     return database.ref('users/' + prn).set({
                         name: name,
@@ -695,7 +704,7 @@
                     setTimeout(() => {
                         setBtnLoading('regSubmitBtn', false, "Sign Up");
                         showPremiumNotification("Successfully Joined! 🎉", `Welcome aboard, ${name}!`, false);
-                        loadStudentDashboard(name, prn, email, phone);
+                        loadStudentDashboard(name, prn, email, phone, "student");
                     }, 2000);
                 }).catch((error) => {
                     setBtnLoading('regSubmitBtn', false, "Sign Up");
@@ -723,7 +732,6 @@
                     });
 
                     if (studentFound) {
-                        // लाइव क्रेडेंशियल वेरिफिकेशन
                         auth.signInWithEmailAndPassword(studentFound.email, loginPassword).then((userCredential) => {
                             if(studentFound.password !== loginPassword) {
                                 database.ref('users/' + studentPRN).update({ password: loginPassword });
@@ -731,7 +739,10 @@
                             setTimeout(() => {
                                 setBtnLoading('loginSubmitBtn', false, "Login");
                                 showPremiumNotification("Login Successful! 🔓", `Welcome back!`, false);
-                                loadStudentDashboard(studentFound.name, studentPRN, studentFound.email, studentFound.phone);
+                                
+                                // रीयल-टाइम डेटा को सिंक कर रहे हैं ताकि रोल मिस न हो
+                                verifiedAdminData = studentFound;
+                                loadStudentDashboard(studentFound.name, studentPRN, studentFound.email, studentFound.phone, studentFound.role);
                             }, 1000);
                         }).catch((authError) => {
                             setBtnLoading('loginSubmitBtn', false, "Login");
@@ -788,12 +799,20 @@
             }
         }
 
-        function loadStudentDashboard(name, prn, email, phone) {
+        function loadStudentDashboard(name, prn, email, phone, role) {
             currentLoggedPRN = prn;
             document.getElementById('menuUserName').innerText = name;
             document.getElementById('menuUserPRN').innerText = prn;
             document.getElementById('menuUserEmail').innerText = "Email: " + email;
             document.getElementById('menuUserPhone').innerText = "Mob: " + phone;
+            
+            // 👑 हायरार्की कंडीशन चेक: अगर यूजर 'master' है तो साइडबार में एडमिन 2 लिंक दिखाओ
+            if(role && role.toLowerCase() === "master") {
+                document.getElementById('masterMenuRow').classList.remove('hidden');
+            } else {
+                document.getElementById('masterMenuRow').classList.add('hidden');
+            }
+
             authContainer.classList.add('hidden');
             document.body.style.justifyContent = 'flex-start';
             topHeader.style.display = 'flex';
@@ -804,6 +823,7 @@
         function closeSidebar() { mySidebar.classList.remove('active'); sidebarOverlay.style.display = 'none'; }
         function openEditPage() { window.location.href = "edit.html"; }
 
+        // 🔒 एडमिन लॉक पर क्लिक करने का सिस्टम (ओपन अकॉर्डिंग टू हायरार्की)
         function openAdminPanel() {
             const lockBtn = document.getElementById('adminLockBtn');
             if (!currentLoggedPRN) { triggerAccessDeniedEffect(lockBtn); return; }
@@ -811,13 +831,20 @@
             database.ref('users/' + currentLoggedPRN).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-                    if (userData.role && userData.role.toLowerCase() === "admin") {
+                    const userRole = userData.role ? userData.role.toLowerCase() : "";
+                    
+                    // अगर यूजर master या admin में से कुछ भी है तो पासवर्ड पॉपअप खोलो
+                    if (userRole === "master" || userRole === "admin") {
                         verifiedAdminData = userData; 
                         document.getElementById('modalAdminPassword').value = ""; 
                         document.getElementById('premiumAdminModal').classList.add('active');
                         document.getElementById('modalAdminPassword').focus();
-                    } else { triggerAccessDeniedEffect(lockBtn); }
-                } else { triggerAccessDeniedEffect(lockBtn); }
+                    } else { 
+                        triggerAccessDeniedEffect(lockBtn); 
+                    }
+                } else { 
+                    triggerAccessDeniedEffect(lockBtn); 
+                }
             }).catch(() => { showPremiumNotification("Server Error", "Database Error!", true); });
         }
 
@@ -845,13 +872,22 @@
 
         function closeAdminModal() { document.getElementById('premiumAdminModal').classList.remove('active'); }
 
+        // 🔐 पासवर्ड वेरीफाई होने पर हायरार्की चेक करके सही फ़ाइल पर भेजना
         function verifyAdminPasswordSubmit() {
             const enteredPass = document.getElementById('modalAdminPassword').value;
             if (!enteredPass) return;
+            
             if (verifiedAdminData && enteredPass === verifiedAdminData.password) {
                 closeAdminModal();
-                showPremiumNotification("Identity Verified", "Opening Admin Hub...", false);
-                setTimeout(() => { window.open("admin.html", "_blank"); }, 400);
+                const userRole = verifiedAdminData.role ? verifiedAdminData.role.toLowerCase() : "";
+                
+                if(userRole === "master") {
+                    showPremiumNotification("Identity Verified", "Opening Master Hub...", false);
+                    setTimeout(() => { window.open("admin2.html", "_blank"); }, 400);
+                } else {
+                    showPremiumNotification("Identity Verified", "Opening Admin Hub...", false);
+                    setTimeout(() => { window.open("admin.html", "_blank"); }, 400);
+                }
             } else {
                 showPremiumNotification("Security Alert", "Incorrect Password!", true);
                 document.getElementById('modalAdminPassword').value = "";
@@ -862,6 +898,8 @@
             if (event.key === 'Enter') { verifyAdminPasswordSubmit(); }
         });
 
+        // लिंक्स फंक्शन्स
+        function openAdmin2Page() { window.location.href = "admin2.html"; }
         function openPremiumPage() { window.location.href = "premium-section.html"; }
         function openMCQPage() { window.location.href = "mcq-file.html"; }
         function openPYQPage() { window.location.href = "pyq-file.html"; }
