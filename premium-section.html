@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Personal Vault & Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-premium: #0b0f19;
+            --card-premium: rgba(20, 27, 45, 0.7);
+            --premium-green: #10b981;
+            --premium-glow: rgba(16, 185, 129, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --premium-gold: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body {
+            background-color: var(--bg-premium);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.05) 0px, transparent 50%);
+        }
+
+        .vault-container { max-width: 1100px; margin: 0 auto; }
+        
+        .vault-header { text-align: center; margin-bottom: 40px; }
+        .vault-header i { font-size: 48px; color: var(--premium-green); margin-bottom: 15px; }
+        .vault-header h1 { font-size: 32px; font-weight: 700; }
+        .vault-header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+
+        /* --- Upload Box Section --- */
+        .upload-section {
+            background: var(--card-premium); border: 1px dashed var(--premium-green);
+            border-radius: 24px; padding: 35px; text-align: center; margin-bottom: 50px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .file-input-label {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: linear-gradient(135deg, #10b981, #059669); color: white;
+            padding: 14px 32px; border-radius: 14px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; margin-bottom: 12px;
+        }
+        .file-input-label:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+        #fileInput { display: none; }
+
+        .progress-container {
+            width: 100%; background: rgba(255,255,255,0.05); height: 6px;
+            border-radius: 10px; margin-top: 20px; display: none; overflow: hidden;
+        }
+        .progress-bar { height: 100%; background: var(--premium-green); width: 0%; transition: width 0.2s; }
+
+        /* --- Tab Navigations for Categories --- */
+        .category-nav {
+            display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border);
+            padding-bottom: 15px; overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 500;
+            display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 14px;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--premium-glow); color: var(--premium-green); border-color: var(--premium-green);
+        }
+        .tab-btn span {
+            background: rgba(255,255,255,0.05); font-size: 11px; padding: 2px 6px; border-radius: 20px;
+        }
+        .tab-btn.active span { background: var(--premium-green); color: #000; font-weight: 600; }
+
+        /* --- Media Content Layouts --- */
+        .media-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px;
+            margin-bottom: 60px;
+        }
+        .media-card {
+            background: var(--card-premium); border: 1px solid var(--border); border-radius: 16px;
+            overflow: hidden; backdrop-filter: blur(10px); transition: transform 0.3s, border-color 0.3s;
+        }
+        .media-card:hover { transform: translateY(-4px); border-color: var(--premium-green); }
+
+        .media-preview { width: 100%; height: 150px; object-fit: cover; background: #000; display: block; }
+        
+        .doc-placeholder-box {
+            width: 100%; height: 150px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; background: rgba(15, 23, 42, 0.4); color: var(--text-muted);
+        }
+        .doc-placeholder-box i { font-size: 40px; margin-bottom: 10px; }
+        .doc-placeholder-box.audio-type i { color: #38bdf8; }
+        .doc-placeholder-box.doc-type i { color: #f43f5e; }
+
+        .media-info { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); }
+        .media-name { font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+        
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none;
+            width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .delete-btn:hover { background: #ef4444; color: white; }
+        .no-data { text-align: center; color: var(--text-muted); padding: 50px 20px; font-size: 14px; grid-column: 1/-1; }
+
+        /* --- ✨ 4 New Premium Action Features Section --- */
+        .premium-hub-title {
+            font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--premium-gold);
+            display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); padding-top: 40px;
+        }
+
+        .premium-features-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;
+            margin-top: 15px; margin-bottom: 40px;
+        }
+
+        .premium-feature-card {
+            background: linear-gradient(135deg, rgba(20, 27, 45, 0.8), rgba(30, 41, 59, 0.4));
+            border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 18px; padding: 25px;
+            position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease;
+        }
+        .premium-feature-card:hover {
+            transform: translateY(-5px); border-color: var(--premium-gold);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.1);
+        }
+
+        .feature-icon-wrapper {
+            width: 46px; height: 46px; background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            color: var(--premium-gold); font-size: 20px; margin-bottom: 15px;
+        }
+
+        .premium-feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+        .premium-feature-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+        
+        .badge-coming-soon {
+            position: absolute; top: 12px; right: 12px; background: rgba(245, 158, 11, 0.15);
+            color: var(--premium-gold); font-size: 10px; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .hidden-section { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="vault-container">
+        <div class="vault-header">
+            <i class="fa-solid fa-crown"></i>
+            <h1>Premium Personal Vault</h1>
+            <p>Your secure cloud storage console categorized by files, media, and private logs.</p>
+        </div>
+
+        <div class="upload-section">
+            <label for="fileInput" class="file-input-label">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Any File
+            </label>
+            <input type="file" id="fileInput" onchange="uploadMediaFile()">
+            <p style="font-size: 12px; color: var(--text-muted);">Supports Images, Videos, Audio tracks, and Documents (PDF/Docs)</p>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p id="uploadStatus" style="font-size: 13px; margin-top: 10px; color: var(--premium-green); display: none;"></p>
+        </div>
+
+        <div class="category-nav">
+            <button class="tab-btn active" onclick="switchCategory('all', this)"><i class="fa-solid fa-folder-open"></i> All <span id="count-all">0</span></button>
+            <button class="tab-btn" onclick="switchCategory('image', this)"><i class="fa-solid fa-image"></i> Photos <span id="count-image">0</span></button>
+            <button class="tab-btn" onclick="switchCategory('video', this)"><i class="fa-solid fa-video"></i> Videos <span id="count-video">0</span></button>
+            <button class="tab-btn" onclick="switchCategory('audio', this)"><i class="fa-solid fa-music"></i> Audios <span id="count-audio">0</span></button>
+            <button class="tab-btn" onclick="switchCategory('doc', this)"><i class="fa-solid fa-file-pdf"></i> Docs <span id="count-doc">0</span></button>
+        </div>
+
+        <div class="media-grid" id="mediaGrid">
+            <div class="no-data">Loading securely from cloud vault...</div>
+        </div>
+
+        <div class="premium-hub-title">
+            <i class="fa-solid fa-gem"></i> Exclusive Premium Features
+        </div>
+
+        <div class="premium-features-grid">
+            <div class="premium-feature-card" onclick="openPremiumFeature('ai-predictor.html')">
+                <span class="badge-coming-soon">Premium</span>
+                <div class="feature-icon-wrapper"><i class="fa-solid fa-brain"></i></div>
+                <h3>AI Question Predictor</h3>
+                <p>Unlock smart artificial intelligence system that evaluates previous years papers to predict upcoming test questions.</p>
+            </div>
+
+            <div class="premium-feature-card" onclick="openPremiumFeature('expert-chat.html')">
+                <span class="badge-coming-soon">Premium</span>
+                <div class="feature-icon-wrapper"><i class="fa-solid fa-headset"></i></div>
+                <h3>1-on-1 Expert Consulting</h3>
+                <p>Direct chat portal to connect with premium technical instructors and clear your project doubts instantly.</p>
+            </div>
+
+            <div class="premium-feature-card" onclick="openPremiumFeature('premium-mock.html')">
+                <span class="badge-coming-soon">Active</span>
+                <div class="feature-icon-wrapper"><i class="fa-solid fa-medal"></i></div>
+                <h3>Advanced Mock Engine</h3>
+                <p>High-level testing simulation layout built exclusively to test your limits under strict real-time timers.</p>
+            </div>
+
+            <div class="premium-feature-card" onclick="openPremiumFeature('source-code.html')">
+                <span class="badge-coming-soon">Vault</span>
+                <div class="feature-icon-wrapper"><i class="fa-solid fa-code-branch"></i></div>
+                <h3>Premium Source Codes</h3>
+                <p>Directly download highly customized web-templates, complete backend logics, and ready-made UI layouts.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+    <script>
+        // 🔒 Firebase लाइव क्रेडेंशियल्स
+        const firebaseConfig = {
+          apiKey: "AIzaSyCZhDPaVY7jv_hXtHdpVqUcGe1hwAxvZmc",
+          authDomain: "students-e5183.firebaseapp.com",
+          databaseURL: "https://students-e5183-default-rtdb.firebaseio.com",
+          projectId: "students-e5183",
+          storageBucket: "students-e5183.firebasestorage.app",
+          messagingSenderId: "473442117683",
+          appId: "1:473442117683:web:f39adc0665317aa95e9b46",
+          measurementId: "G-DT4XQLZJW3"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const storage = firebase.storage();
+        const auth = firebase.auth();
+
+        let currentUserUID = "";
+        let currentTabFilter = "all";
+        let localVaultDataList = []; // लोकल एरे फ़िल्टरिंग को फ़ास्ट करने के लिए
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUserUID = user.uid;
+                loadUserMedia();
+            } else {
+                alert("Security Alert: Session expired. Please login again.");
+                window.close();
+            }
+        });
+
+        // 📤 स्मार्ट फाइल अपलोड (पहचानता है कि फाइल इमेज है, वीडियो है, ऑडियो है या डॉक)
+        function uploadMediaFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const fileId = Date.now();
+            const fileName = file.name;
+            const fileType = file.type;
+            
+            // कैटगरी डिसाइड करना
+            let mappedCategory = "doc";
+            if(fileType.startsWith('image/')) mappedCategory = "image";
+            else if(fileType.startsWith('video/')) mappedCategory = "video";
+            else if(fileType.startsWith('audio/')) mappedCategory = "audio";
+
+            const storageRef = storage.ref(`users/${currentUserUID}/vault/${fileId}_${fileName}`);
+            
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const uploadStatus = document.getElementById('uploadStatus');
+
+            progressContainer.style.display = 'block';
+            uploadStatus.style.display = 'block';
+
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                    uploadStatus.innerText = `Uploading Security Network: ${Math.round(progress)}%`;
+                }, 
+                (error) => {
+                    alert("Upload error: " + error.message);
+                    progressContainer.style.display = 'none';
+                    uploadStatus.style.display = 'none';
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        database.ref(`users/${currentUserUID}/vault_data/${fileId}`).set({
+                            name: fileName,
+                            url: downloadURL,
+                            type: fileType,
+                            category: mappedCategory,
+                            timestamp: fileId
+                        }).then(() => {
+                            uploadStatus.innerText = "Encrypted & Saved Successfully! 🔓";
+                            fileInput.value = "";
+                            setTimeout(() => {
+                                progressContainer.style.display = 'none';
+                                uploadStatus.style.display = 'none';
+                            }, 1500);
+                        });
+                    });
+                }
+            );
+        }
+
+        // 🖼️ डाटा लोड करना और काउंटर अपडेट करना
+        function loadUserMedia() {
+            database.ref(`users/${currentUserUID}/vault_data`).on('value', (snapshot) => {
+                localVaultDataList = [];
+                
+                let counts = { all: 0, image: 0, video: 0, audio: 0, doc: 0 };
+
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const key = childSnapshot.key;
+                        const data = childSnapshot.val();
+                        const item = { key, ...data };
+                        
+                        localVaultDataList.push(item);
+                        
+                        counts.all++;
+                        if (counts[data.category] !== undefined) {
+                            counts[data.category]++;
+                        } else {
+                            counts.doc++; // बैकअप अगर कोई अलग फ़ॉर्मेट हो
+                        }
+                    });
+                }
+
+                // काउंटर्स को स्क्रीन पर अपडेट करना
+                document.getElementById('count-all').innerText = counts.all;
+                document.getElementById('count-image').innerText = counts.image;
+                document.getElementById('count-video').innerText = counts.video;
+                document.getElementById('count-audio').innerText = counts.audio;
+                document.getElementById('count-doc').innerText = counts.doc;
+
+                renderGrid();
+            });
+        }
+
+        // फ़िल्टर के हिसाब से ग्रिड रेंडर करना
+        function renderGrid() {
+            const mediaGrid = document.getElementById('mediaGrid');
+            mediaGrid.innerHTML = "";
+
+            const filteredData = localVaultDataList.filter(item => {
+                if (currentTabFilter === "all") return true;
+                return item.category === currentTabFilter;
+            });
+
+            if (filteredData.length === 0) {
+                mediaGrid.innerHTML = `<div class="no-data"><i class="fa-solid fa-folder-open" style="font-size:30px;margin-bottom:8px;display:block;color:var(--text-muted);"></i>No files found in this category.</div>`;
+                return;
+            }
+
+            // नए अपलोड पहले दिखाने के लिए रिवर्स सॉर्ट करना
+            filteredData.sort((a, b) => b.timestamp - a.timestamp);
+
+            filteredData.forEach((file) => {
+                let previewElement = "";
+
+                if (file.category === 'image') {
+                    previewElement = `<img src="${file.url}" class="media-preview" alt="img">`;
+                } else if (file.category === 'video') {
+                    previewElement = `<video src="${file.url}" class="media-preview" controls></video>`;
+                } else if (file.category === 'audio') {
+                    previewElement = `<div class="doc-placeholder-box audio-type"><i class="fa-solid fa-file-audio"></i><audio src="${file.url}" controls style="width:90%;height:28px;margin-top:5px;"></audio></div>`;
+                } else {
+                    previewElement = `<div class="doc-placeholder-box doc-type" onclick="window.open('${file.url}', '_blank')"><i class="fa-solid fa-file-pdf"></i><span style="font-size:11px;color:var(--premium-green);text-decoration:underline;cursor:pointer;">Click to View Doc</span></div>`;
+                }
+
+                const cardHtml = `
+                    <div class="media-card">
+                        ${previewElement}
+                        <div class="media-info">
+                            <span class="media-name" title="${file.name}">${file.name}</span>
+                            <button class="delete-btn" onclick="deleteMediaFile('${file.key}', '${file.name}')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                mediaGrid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // टैब स्विच करने का फंक्शन
+        function switchCategory(category, element) {
+            currentTabFilter = category;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderGrid();
+        }
+
+        // 🗑️ डिलीट करने का लॉजिक
+        function deleteMediaFile(fileId, fileName) {
+            if (confirm(`Do you really want to delete "${fileName}" from your cloud vault?`)) {
+                database.ref(`users/${currentUserUID}/vault_data/${fileId}`).remove().then(() => {
+                    const storageRef = storage.ref(`users/${currentUserUID}/vault/${fileId}_${fileName}`);
+                    storageRef.delete().catch((err) => console.log("Storage cleanup notice:", err));
+                });
+            }
+        }
+
+        // 🔗 4 प्रीमियम सेक्शंस पर क्लिक हैंडलर
+        function openPremiumFeature(pageName) {
+            alert(`Redirecting to your Premium Sub-Module: [${pageName}]. You can build this page next!`);
+            // जब आप इन पेजेस को बना लेंगे, तब नीचे वाली लाइन चालू कर देना:
+            // window.location.href = pageName;
+        }
+    </script>
+</body>
+</html>
